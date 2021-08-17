@@ -13,7 +13,7 @@ public interface UserService extends IService<User> {
      * @param openId
      * @return 存在返回User对象，否则返回Null
      */
-    User findByOpenId(String openId);
+    UserVo findByOpenId(String openId);
 
     Result userInfoCompletion(UserVo userVo);
 

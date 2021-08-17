@@ -71,28 +71,23 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //判断用户表中是否存在该用户，不存在则进行解密得到用户信息，并进行新增用户
-        User resultUser = userService.findByOpenId(openId);
+        UserVo resultUser = userService.findByOpenId(openId);
 
         ResultCodeEnum resultCode = null;
-        Map<String, Object> data = new HashMap<>();
 
         //用户没有注册，向数据库插入新用户，不返回token
         if (resultUser == null) {
 
-            resultUser = new User();
+            resultUser = new UserVo();
             resultUser.setOpenId(openId);
             resultUser.setSessionKey(sessionKey);
             resultUser.setInfoComplete(0);
             userService.save(resultUser);
 
-            data.put("user", resultUser);
-            data.put("token", null);
-
             resultCode = ResultCodeEnum.USER_INFO_NOT_COMPLETE;
         }
         //用户已经注册，判断是否完善了信息，是则返回token
         else {
-            data.put("user", resultUser);
 
             //如果用户已经完善信息，返回登录token
             if(resultUser.getInfoComplete() == 1) {
@@ -102,7 +97,8 @@ public class AuthServiceImpl implements AuthService {
                 claim.put("jobId", resultUser.getJobId());
                 String token = JwtHelper.createToken(claim);
 
-                data.put("token", token);
+                resultUser.setToken(token);
+
                 resultCode = ResultCodeEnum.SUCCESS;
             }
             //如果用户没有完善信息，就不返回登录token
@@ -111,11 +107,10 @@ public class AuthServiceImpl implements AuthService {
             }
         }
 
-        Map<String, Object> resultData = BeanUtils.bean2Map(data.get("user"), new String[]{
+        Map<String, Object> resultData = BeanUtils.bean2Map(resultUser, new String[]{
                 "openId",
                 "sessionKey"
         });
-
 
         return Result.build(resultData, resultCode);
     }

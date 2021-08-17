@@ -31,9 +31,8 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public Result login(@RequestBody String code) {
-
         JSONObject parse = JSON.parseObject(code);
-       code = (String) parse.get("code");
+        code = (String) parse.get("code");
 
         Result result = authService.login(code);
         return result;

@@ -10,7 +10,8 @@ import lombok.Data;
  */
 @Data
 public class UserVo extends User {
-
+    
+    private String token;
     private String collegeName;
     private String majorName;
     private String className;

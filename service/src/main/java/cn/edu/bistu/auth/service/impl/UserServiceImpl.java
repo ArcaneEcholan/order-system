@@ -23,7 +23,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     UserInfoChecker userInfoChecker;
 
     @Override
-    public User findByOpenId(String openId) {
+    public UserVo findByOpenId(String openId) {
         UserVo userVo = userMapper.selectByOpenId(openId);
         return userVo;
     }
