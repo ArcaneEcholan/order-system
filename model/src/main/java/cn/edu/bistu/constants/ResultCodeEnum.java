@@ -15,6 +15,7 @@ public enum ResultCodeEnum {
     USER_UNREGISTERED(103, "此id用户未注册"),
     OAUTH_CODE_INVALID(104, "无效的 oauth_code"),
     OAUTH_CODE_BEEN_USED(105, "oauth_code 已被使用"),
+    USER_INFO_COMPLETED(106, "用户信息无需完善"),
 
     SUCCESS(200,"成功"),
     FAIL(201, "失败"),

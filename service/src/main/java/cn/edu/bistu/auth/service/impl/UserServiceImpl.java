@@ -19,7 +19,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     UserMapper userMapper;
 
-
     @Autowired
     UserInfoChecker userInfoChecker;
 
@@ -30,46 +29,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Result userInfoCompletion(User user) {
+    public Result userInfoCompletion(UserVo userVo) {
 
-        //检查Id是否传递
-        if(user.getId() == null) {
+        //检查前端信息是否完整
+        boolean frontInfoComplete = false;
+        userInfoChecker.setUser(userVo);
+        try {
+            frontInfoComplete = userInfoChecker.checkFrontUserInfo();
+        } catch (NoSuchFieldException e) {
+            log.error("requiredUserInfo.properties配置文件属性配置错误");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        if(frontInfoComplete) {
+            //检查用户是否注册
+            User user1 = userMapper.selectById(userVo.getId());
+            if(user1 == null) {
+                return new Result().codeEnum(ResultCodeEnum.USER_UNREGISTERED);
+            }
+
+            //检查用户信息是否完善，已经完善就跳过
+            Integer isComplete = userMapper.selectById(userVo.getId()).getInfoComplete();
+
+            //如果未完善，检查前端信息是否完整
+            if (isComplete.equals(0)) {
+
+                userVo.setInfoComplete(1);
+                userMapper.updateUserById(userVo);
+                return Result.ok();
+
+            } else {
+                return new Result().codeEnum(ResultCodeEnum.USER_INFO_COMPLETED);
+            }
+
+        } else {
             return new Result().codeEnum(ResultCodeEnum.FRONT_DATA_MISSING);
         }
 
-        //检查用户是否注册
-        User user1 = userMapper.selectById(user.getId());
-        if(user1 == null) {
-            return new Result().codeEnum(ResultCodeEnum.USER_UNREGISTERED);
-        }
-
-        //检查用户信息是否完善，已经完善就跳过
-        Integer isComplete = userMapper.selectById(user.getId()).getInfoComplete();
-
-        userInfoChecker.setUser(user);
-        //如果未完善，检查前端信息是否完整
-        if (isComplete.equals(0)) {
-            boolean frontInfoComplete = false;
-
-            try {
-                frontInfoComplete = userInfoChecker.checkFrontUserInfo();
-            } catch (NoSuchFieldException e) {
-                log.error("requiredUserInfo.properties配置文件属性配置错误");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            //如果完整，更新表，否则返回错误代码
-            if (frontInfoComplete) {
-                user.setInfoComplete(1);
-                updateById(user);
-                return Result.ok();
-            } else {
-                return new Result().codeEnum(ResultCodeEnum.FRONT_DATA_MISSING);
-            }
-        } else {
-            return Result.ok();
-        }
     }
 
 

@@ -40,9 +40,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth/userInfoCompletion")
-    public Result completeUserInfo(@RequestBody User user, HttpServletRequest req) {
-
-        Result result = userService.userInfoCompletion(user);
+    public Result completeUserInfo(@RequestBody UserVo userVo, HttpServletRequest req) {
+        Result result = userService.userInfoCompletion(userVo);
         return result;
     }
 

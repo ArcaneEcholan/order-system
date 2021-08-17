@@ -2,6 +2,7 @@ package cn.edu.bistu.model;
 
 import cn.edu.bistu.common.BeanUtils;
 import cn.edu.bistu.model.entity.User;
+import cn.edu.bistu.model.vo.UserVo;
 import cn.edu.bistu.properties.RequiredUserInfoProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -21,56 +22,42 @@ public class UserInfoChecker {
     @Autowired
     private RequiredUserInfoProperties requiredUserInfoProperties;
 
-    private User user;
+    private UserVo user;
 
     public boolean checkFrontUserInfo() throws NoSuchFieldException, IllegalAccessException {
         String profile = checkAuth();
 
-        List<Field> fieldList = BeanUtils.getAllDeclaredFields(User.class);
+        List<Field> fieldList = BeanUtils.getAllDeclaredFields(UserVo.class);
+        List<String> requiredUserInfo = null;
 
         if ("teacher".equals(profile)) {
-            List<String> requiredTeacherUserInfo =
+            requiredUserInfo =
                     requiredUserInfoProperties.getRequiredTeacherUserInfo();
-            for (String s : requiredTeacherUserInfo) {
-                Class<User> userClass = User.class;
-                Field declaredField;
-                for(int i = 0 ; i < fieldList.size(); i++) {
-                    declaredField = fieldList.get(i);
-                    declaredField.setAccessible(true);
-                    boolean equals = fieldList.get(i).getName().equals(s);
-                    if(equals) {
-                        Object o = declaredField.get(user);
-                        if (o == null) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
         } else if ("student".equals(profile)) {
-            List<String> requiredStudentUserInfo =
+            requiredUserInfo =
                     requiredUserInfoProperties.getRequiredStudentUserInfo();
-            for (String s : requiredStudentUserInfo) {
-                Class<User> userClass = User.class;
-                Field declaredField;
-                for(int i = 0 ; i < fieldList.size(); i++) {
-                    declaredField = fieldList.get(i);
-                    declaredField.setAccessible(true);
-                    boolean equals = fieldList.get(i).getName().equals(s);
-                    if(equals) {
-                        Object o = declaredField.get(user);
-                        if (o == null) {
-                            log.info(fieldList.get(i).getName() + "required");
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        } else {
-            return false;
         }
 
+        if(requiredUserInfo != null) {
+            for (String requiredProperty : requiredUserInfo) {
+
+                Field declaredField;
+                for (int i = 0; i < fieldList.size(); i++) {
+                    declaredField = fieldList.get(i);
+                    declaredField.setAccessible(true);
+                    boolean equals = fieldList.get(i).getName().equals(requiredProperty);
+                    if (equals) {
+                        Object o = declaredField.get(user);
+                        if (o == null) {
+                            log.debug(declaredField.getName());
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     public String checkAuth() {

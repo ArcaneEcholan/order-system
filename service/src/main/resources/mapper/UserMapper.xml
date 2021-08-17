@@ -29,5 +29,23 @@
         where open_id=#{openId};
     </select>
 
+    <update id="updateUserById">
+        update user
+        set
+            name=#{name},
+            role=#{role},
+            college_id=(select id from college where name=#{collegeName}),
+            major_id=(select id from major where name=#{majorName}),
+            class_id=(select id from class where name=#{className}),
+            secondary_dept_id=(select id from secondary_dept where name=#{secondaryDeptName}),
+            grade=#{grade},
+            student_id=#{studentId},
+            job_id=#{jobId},
+            update_time=#{updateTime},
+            info_complete=#{infoComplete}
+
+        where id=#{id}
+</update>
+
 
 </mapper>
