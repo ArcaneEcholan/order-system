@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.bistu.auth.mapper.UserMapper">
+
+    <select id="selectByOpenId" resultType="cn.edu.bistu.model.vo.UserVo">
+        select
+            u.id
+            ,role
+            ,u.name
+            ,col.name college_name
+            ,ma.name major_name
+            ,se.name secondary_dept_name
+            ,cl.name class_name
+            ,grade
+            ,gender
+            ,avatar_url
+            ,nick_name
+            ,student_id
+            ,job_id
+            ,info_complete
+            ,create_time
+            ,update_time
+        from user u left join  class cl on u.class_id=cl.id
+        left join college col on u.college_id=col.id
+        left join major ma on u.major_id=ma.id
+        left join secondary_dept se on u.secondary_dept_id=se.id
+        where open_id=#{openId};
+    </select>
+
+
+</mapper>

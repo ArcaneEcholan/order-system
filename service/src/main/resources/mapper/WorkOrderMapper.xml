@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.bistu.workOrder.mapper.WorkOrderMapper">
+
+
+    <select id="workOrderPages" resultType="cn.edu.bistu.model.vo.WorkOrderVo">
+        select
+            wo.id,
+            is_examined,
+            flow_id,
+            wo.create_time,
+            wo.update_time,
+            status,
+            content,
+            title,
+            u.student_id ,
+            u.job_id ,
+            f.name flow_name,
+            u.name initiator_name,
+        wo.attachment_name
+        from work_order wo left join user u on wo.initiator_id = u.id
+                           left join flow f on wo.flow_id = f.id
+        <where>
+            wo.deleted = 0 and f.deleted = 0 and u.deleted = 0
+            and wo.initiator_id = #{arg1.initiatorId}
+            <if test="arg1.title!=null and arg1.title!=''">
+                and wo.title like '%' #{arg1.title} '%'
+            </if>
+        </where>
+
+    </select>
+
+</mapper>
