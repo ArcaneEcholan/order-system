@@ -7,9 +7,19 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+/**
+ * 该类主要调用JWT的API，用于创建token，验证token时效，解析token内容等。
+ */
 public class JwtHelper {
 
+    /**
+     * token的过期时间，Time接口中定义了一些关于日期的常量
+     */
     private static long tokenExpiration = Time.DAY;
+
+    /**
+     * 生成token所需的密钥
+     */
     private static String tokenSignKey = "111111";
 
     /**
@@ -42,7 +52,7 @@ public class JwtHelper {
     }
 
     /**
-     * 生成token的过期时间
+     * 生成token的过期时间，使用时间戳与
      */
     private static Date generateExpirationDate() {
         return new Date(System.currentTimeMillis() + tokenExpiration);

@@ -24,9 +24,9 @@
                            left join flow f on wo.flow_id = f.id
         <where>
             wo.deleted = 0 and f.deleted = 0 and u.deleted = 0
-            and wo.initiator_id = #{arg1.initiatorId}
-            <if test="arg1.title!=null and arg1.title!=''">
-                and wo.title like '%' #{arg1.title} '%'
+            and wo.initiator_id = #{workOrderVo.initiatorId}
+            <if test="workOrderVo.title!=null and workOrderVo.title!=''">
+                and wo.title like '%' #{workOrderVo.title} '%'
             </if>
         </where>
 

@@ -1,7 +1,6 @@
 package cn.edu.bistu.auth.exception;
 
 import lombok.Data;
-import sun.security.util.math.ImmutableIntegerModuloP;
 
 @Data
 public class Jscode2sessionException extends RuntimeException{

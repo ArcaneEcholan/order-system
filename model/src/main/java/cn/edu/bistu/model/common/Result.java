@@ -1,7 +1,5 @@
 package cn.edu.bistu.model.common;
 
-//import io.swagger.annotations.ApiModel;
-//import io.swagger.annotations.ApiModelProperty;
 import cn.edu.bistu.constants.ResultCodeEnum;
 import lombok.Data;
 

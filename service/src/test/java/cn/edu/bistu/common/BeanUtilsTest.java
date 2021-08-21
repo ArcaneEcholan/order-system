@@ -1,14 +1,11 @@
 package cn.edu.bistu.common;
 
 import cn.edu.bistu.model.entity.User;
-import cn.edu.bistu.model.entity.WorkOrder;
-import cn.edu.bistu.properties.RequiredUserInfoProperties;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+//import cn.edu.bistu.common.BeanUtils;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

@@ -47,17 +47,9 @@ public class TokenAuthInterceptor implements HandlerInterceptor {
         //转发或放行
         Long id = JwtHelper.getClaim(token, "id", Integer.class).longValue();
 
-        Integer a = JwtHelper.getClaim(token, "studentId", Integer.class);
-        Long studentId = 0L;
-        if(a != null) {
-            studentId = a.longValue();
-        }
+        Long studentId = JwtHelper.getClaim(token, "studentId", Long.class);
 
-        Integer b = JwtHelper.getClaim(token, "jobId", Integer.class);
-        Long jobId = 0L;
-        if(b != null) {
-            jobId = b.longValue();
-        }
+        Long jobId = JwtHelper.getClaim(token, "jobId", Long.class);
 
         log.info("id=" + id);
         log.info("studentId=" + studentId);

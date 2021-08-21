@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@CrossOrigin
 public class WorkOrderController {
 
     @Autowired
@@ -47,5 +48,7 @@ public class WorkOrderController {
 
         return Result.ok(resultMap);
     }
+
+
 
 }
