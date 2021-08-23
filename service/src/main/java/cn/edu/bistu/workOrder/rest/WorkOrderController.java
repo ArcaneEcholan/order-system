@@ -1,17 +1,24 @@
 package cn.edu.bistu.workOrder.rest;
 
 import cn.edu.bistu.auth.JwtHelper;
+import cn.edu.bistu.auth.exception.AttachmentNotExistsException;
+import cn.edu.bistu.auth.exception.Jscode2sessionException;
 import cn.edu.bistu.common.BeanUtils;
 import cn.edu.bistu.common.MapService;
 import cn.edu.bistu.model.common.Result;
+import cn.edu.bistu.model.entity.WorkOrder;
 import cn.edu.bistu.model.vo.WorkOrderVo;
 import cn.edu.bistu.workOrder.service.WorkOrderService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.net.www.URLConnection;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -57,13 +64,29 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("/workOrder/attachment/{workOrderId}")
-    public Result attachment(@PathVariable(name = "workOrderId") Integer workOrderId) {
-        System.out.println(workOrderId);
+    public void attachment(@PathVariable(name = "workOrderId") Long workOrderId, HttpServletResponse resp) throws IOException {
 
+        //查询附件
+        WorkOrder workOrder = workOrderService.getById(workOrderId);
+        byte[] attachmentBytes = workOrder.getAttachment();
 
+        //log.debug("" + attachmentBytes.length);
 
+        if(attachmentBytes == null) {
+            throw new AttachmentNotExistsException();
+        }
 
-        return Result.build(null);
+        //获取附件的MIME类型
+        String mimeType = URLConnection.guessContentTypeFromName(workOrder.getAttachmentName());
+        //设置响应的MIME类型
+        resp.setContentType(mimeType);
+
+        //让浏览器以附件形式处理响应数据
+        resp.setHeader("Content-Disposition", "attachment; fileName=" + workOrder.getAttachmentName());
+
+        //将二进制附件写入到http响应体中
+        ServletOutputStream out = resp.getOutputStream();
+        out.write(attachmentBytes, 0, attachmentBytes.length);
     }
 
 
