@@ -15,12 +15,29 @@ public class JwtHelper {
     /**
      * token的过期时间，Time接口中定义了一些关于日期的常量
      */
-    private static long tokenExpiration = Time.DAY;
+    private static long tokenExpiration = Time.WEEK.getValue();
+
 
     /**
      * 生成token所需的密钥
      */
     private static String tokenSignKey = "111111";
+
+
+    public static long getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public static String getTokenSignKey() {
+        return tokenSignKey;
+    }
+
+    static {
+        ResourceBundle resource = ResourceBundle.getBundle("token");//test为属性文件名，放在包com.mmq下，如果是放在src下，直接用test即可
+        tokenSignKey = resource.getString("tokenSignKey");
+        String expiration = resource.getString("tokenExpiration");
+        tokenExpiration = Time.valueOf(expiration).getValue();
+    }
 
     /**
      * 根据map中的数据创建token
