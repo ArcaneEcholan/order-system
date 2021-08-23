@@ -24,7 +24,7 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
         HandlerInterceptor tokenAuthInterceptor = getMyInterceptors(TokenAuthInterceptor.class);
         registry.addInterceptor(tokenAuthInterceptor)
                 .excludePathPatterns("/auth/login")
-                .excludePathPatterns("/auth/userInfoCompletion")
+                .excludePathPatterns("/auth/userInfoCompletion");
         ;
     }
 }

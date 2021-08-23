@@ -1,5 +1,6 @@
 package cn.edu.bistu.workOrder.rest;
 
+import cn.edu.bistu.auth.JwtHelper;
 import cn.edu.bistu.common.BeanUtils;
 import cn.edu.bistu.common.MapService;
 import cn.edu.bistu.model.common.Result;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 @Slf4j
 @RestController
@@ -49,6 +51,20 @@ public class WorkOrderController {
         return Result.ok(resultMap);
     }
 
+    /**
+     * 根据工单号返回工单附件
+     * 入参：工单号(路径传参)
+     * @return
+     */
+    @PostMapping("/workOrder/attachment/{workOrderId}")
+    public Result attachment(@PathVariable(name = "workOrderId") Integer workOrderId) {
+        System.out.println(workOrderId);
+
+
+
+
+        return Result.build(null);
+    }
 
 
 }
