@@ -17,6 +17,7 @@ public enum ResultCodeEnum {
     OAUTH_CODE_BEEN_USED(105, "oauth_code 已被使用"),
     USER_INFO_COMPLETED(106, "用户信息无需完善"),
     ATTACHMENT_NOT_EXISTS(107, "附件不存在"),
+    FRONT_DATA_REDUNDANT(108, "前端数据冗余"),
 
     SUCCESS(200,"成功"),
     FAIL(201, "失败"),

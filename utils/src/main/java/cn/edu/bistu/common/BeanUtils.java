@@ -1,13 +1,16 @@
 package cn.edu.bistu.common;
 
-import org.hibernate.validator.internal.util.privilegedactions.GetDeclaredField;
 
 import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class BeanUtils {
+
+    public static boolean isFieldNull(Object obj, Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        return field.get(obj) == null;
+    }
 
 
     public static String formatDate(Object obj, Field field) throws IllegalAccessException {
@@ -57,8 +60,6 @@ public class BeanUtils {
                             result.put(sourceFiledName, sourceProperty);
                         }
                     }
-
-
                 }
             }
         } catch (IllegalAccessException ex) {

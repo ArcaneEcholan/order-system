@@ -1,9 +1,9 @@
 package cn.edu.bistu.workOrder.rest;
 
 import cn.edu.bistu.auth.exception.AttachmentNotExistsException;
-import cn.edu.bistu.auth.exception.Jscode2sessionException;
 import cn.edu.bistu.common.BeanUtils;
 import cn.edu.bistu.common.MapService;
+import cn.edu.bistu.common.config.ValidationWrapper;
 import cn.edu.bistu.common.utils.MimeTypeUtils;
 import cn.edu.bistu.constants.ResultCodeEnum;
 import cn.edu.bistu.model.common.Result;
@@ -15,17 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.net.www.URLConnection;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -34,6 +31,9 @@ public class WorkOrderController {
 
     @Autowired
     WorkOrderService workOrderService;
+
+    @Autowired
+    ValidationWrapper globalValidator;
 
     /**
      * 返回分页的工单列表，支持名称模糊搜索
@@ -84,7 +84,7 @@ public class WorkOrderController {
 
 
         //获取附件的MIME类型
-        String mimeType=MimeTypeUtils.getType(workOrder.getAttachmentName());
+        String mimeType = MimeTypeUtils.getType(workOrder.getAttachmentName());
         //设置响应的MIME类型
         resp.setContentType(mimeType);
 
@@ -124,7 +124,45 @@ public class WorkOrderController {
         } else {
             return Result.build(null, ResultCodeEnum.FRONT_DATA_MISSING);
         }
+    }
 
+    /**
+     * @return
+     */
+    @PostMapping("/workOrder/submission")
+    public Result submitWorkOrder(@RequestBody WorkOrderVo workOrderVo) {
+
+        try{
+            globalValidator.setRequiredPropsName(new String[]{"initiatorId", "flowId", "content", "title"});
+
+            Set<ConstraintViolation<WorkOrderVo>> set = globalValidator.validate(workOrderVo);
+
+            if (!set.isEmpty()) {
+                List<String> missingProps = new ArrayList<>();
+                for (ConstraintViolation<WorkOrderVo> constraintViolation : set) {
+                    String propName = constraintViolation.getPropertyPath().toString();
+                    missingProps.add(propName);
+
+                    log.debug(propName + ":" + constraintViolation.getMessage());
+                }
+
+                return Result.build(missingProps, ResultCodeEnum.FRONT_DATA_MISSING);
+            }
+
+            List<String> redundantParams = globalValidator.checkRedundantParam(workOrderVo);
+
+            if(!redundantParams.isEmpty()) {
+                return Result.build(redundantParams, ResultCodeEnum.FRONT_DATA_MISSING);
+            }
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } finally {
+            globalValidator.setRequiredPropsNameNull();
+        }
+
+        workOrderService.save(workOrderVo);
+        return Result.ok();
     }
 
 

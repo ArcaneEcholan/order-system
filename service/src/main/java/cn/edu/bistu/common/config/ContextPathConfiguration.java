@@ -42,7 +42,6 @@ public class ContextPathConfiguration {
                 ":" + getPort() +
                 (getContextPath().equals("/") ? "" : getContextPath());
 
-
         return url;
     }
 

@@ -35,15 +35,20 @@ public class WorkOrderServiceImpl extends ServiceImpl<WorkOrderMapper, WorkOrder
     public IPage<WorkOrderVo> listWorkOrder(WorkOrderVo workOrderVo) {
 
         Page<WorkOrder> page = new Page<>();
-        page.setCurrent(workOrderVo.getCurrent());
-        page.setSize(workOrderVo.getSize());
+        if (workOrderVo.getSize() != null) {
+            page.setSize(workOrderVo.getSize());
+        }
+        if (workOrderVo.getCurrent() != null) {
+            page.setCurrent(workOrderVo.getCurrent());
+        }
+
         Page<WorkOrderVo> resultPage = workOrderMapper.workOrderPages(page, workOrderVo);
         for (WorkOrderVo workOrder : resultPage.getRecords()) {
             String attachmentName = workOrder.getAttachmentName();
-            if(!StringUtils.isEmpty(attachmentName)) {
+            if (!StringUtils.isEmpty(attachmentName)) {
                 String url = contextPathConfiguration.getUrl() +
                         attachmentDownloadApi +
-                          "/" + attachmentName;
+                        "/" + attachmentName;
                 log.debug(url);
                 workOrder.setAttachmentUrl(url);
             }

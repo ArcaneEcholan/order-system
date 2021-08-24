@@ -9,29 +9,25 @@ import java.util.Date;
 
 
 @Data
-public class WorkOrder {
-    @TableId(type=IdType.AUTO)
-    private Long id;
+public class WorkOrder extends BaseEntity{
+
+
     private Integer isExamined;
+
+    @NotNull
     private Long initiatorId;
+    @NotNull
     private Long flowId;
 
+    @NotNull
     private String title;
-
-    @TableField(fill= FieldFill.INSERT)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime;
-
-    @TableField(fill= FieldFill.UPDATE)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateTime;
 
     private byte[] attachment;
     private String attachmentName;
 
     private Integer status;
+    @NotNull
     private String content;
 
-    @TableLogic
-    private Integer deleted;
+
 }

@@ -23,7 +23,7 @@ public class UserServiceImplTest {
         //user.setClassId(1);
         //
         //UserDto user1 = userService.convertId2Name(user);
-        //user.setNames(user1);
+        //user.setRequiredPropsName(user1);
         //
         //System.out.println(user);
     }

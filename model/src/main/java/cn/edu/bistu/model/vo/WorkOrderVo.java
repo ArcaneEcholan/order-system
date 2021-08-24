@@ -15,6 +15,6 @@ public class WorkOrderVo extends WorkOrder{
 
     String attachmentUrl;
 
-    Long size = 10L;
-    Long current = 1L;
+    Long size;
+    Long current;
 }
