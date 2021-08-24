@@ -1,5 +1,6 @@
 package cn.edu.bistu.workOrder.rest;
 
+import cn.edu.bistu.approval.service.ApprovalService;
 import cn.edu.bistu.auth.exception.AttachmentNotExistsException;
 import cn.edu.bistu.common.BeanUtils;
 import cn.edu.bistu.common.MapService;
@@ -7,6 +8,7 @@ import cn.edu.bistu.common.config.ValidationWrapper;
 import cn.edu.bistu.common.utils.MimeTypeUtils;
 import cn.edu.bistu.constants.ResultCodeEnum;
 import cn.edu.bistu.model.common.Result;
+import cn.edu.bistu.model.entity.Approval;
 import cn.edu.bistu.model.entity.WorkOrder;
 import cn.edu.bistu.model.vo.WorkOrderVo;
 import cn.edu.bistu.workOrder.service.WorkOrderService;
@@ -28,6 +30,9 @@ import java.util.*;
 @RestController
 @CrossOrigin
 public class WorkOrderController {
+
+    @Autowired
+    ApprovalService approvalService;
 
     @Autowired
     WorkOrderService workOrderService;
@@ -127,12 +132,18 @@ public class WorkOrderController {
     }
 
     /**
+     * 提交工单接口，保存工单信息，同时工单被流转到第一个审批节点
      * @return
      */
     @PostMapping("/workOrder/submission")
-    public Result submitWorkOrder(@RequestBody WorkOrderVo workOrderVo) {
+    public Result submitWorkOrder(@RequestBody WorkOrderVo workOrderVo,
+                                  HttpServletRequest req) {
 
-        try{
+        MapService userInfo = (MapService) req.getAttribute("userInfo");
+        Long id = userInfo.getVal("id", Long.class);
+        workOrderVo.setInitiatorId(id);
+
+        try {
             globalValidator.setRequiredPropsName(new String[]{"initiatorId", "flowId", "content", "title"});
 
             Set<ConstraintViolation<WorkOrderVo>> set = globalValidator.validate(workOrderVo);
@@ -151,7 +162,7 @@ public class WorkOrderController {
 
             List<String> redundantParams = globalValidator.checkRedundantParam(workOrderVo);
 
-            if(!redundantParams.isEmpty()) {
+            if (!redundantParams.isEmpty()) {
                 return Result.build(redundantParams, ResultCodeEnum.FRONT_DATA_MISSING);
             }
 
@@ -162,8 +173,18 @@ public class WorkOrderController {
         }
 
         workOrderService.save(workOrderVo);
+        log.debug("workOrderVo id after saving:" + workOrderVo.getId());
+
+        Approval approval = new Approval();
+
+        approval.setFlowNodeId(0L);
+        approval.setWorkOrderId(workOrderVo.getId());
+        log.debug("approval flowNodeId:" + approval.getFlowNodeId());
+        log.debug("approval workOrderId:" + approval.getWorkOrderId());
+
+        approvalService.save(approval);
+
         return Result.ok();
     }
-
 
 }

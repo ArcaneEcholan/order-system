@@ -22,6 +22,7 @@ public class BaseEntity {
     private Date updateTime;
 
     @TableLogic
+    @TableField(fill= FieldFill.INSERT)
     private Integer deleted;
 
 }

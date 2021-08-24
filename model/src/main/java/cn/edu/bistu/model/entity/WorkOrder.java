@@ -12,6 +12,7 @@ import java.util.Date;
 public class WorkOrder extends BaseEntity{
 
 
+    @TableField(fill= FieldFill.INSERT)
     private Integer isExamined;
 
     @NotNull
@@ -25,7 +26,11 @@ public class WorkOrder extends BaseEntity{
     private byte[] attachment;
     private String attachmentName;
 
+
+    @TableField(fill= FieldFill.INSERT)
     private Integer status;
+
+
     @NotNull
     private String content;
 

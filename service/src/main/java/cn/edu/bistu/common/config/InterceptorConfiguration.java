@@ -25,7 +25,7 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(tokenAuthInterceptor)
                 .excludePathPatterns("/auth/login")
                 .excludePathPatterns("/auth/userInfoCompletion")
-                //.excludePathPatterns("/workOrder/attachment/*")
+                .excludePathPatterns("/workOrder/attachment/*")
 
         ;
     }
